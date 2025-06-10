@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Details</title>
+</head>
+<body>
+    <h1>Course Information</h1>
+    <p>ID: <span th:text="${course.id}"></span></p>
+    <p>Name: <span th:text="${course.name}"></span></p>
+    <p>Duration: <span th:text="${course.duration}"></span></p>
+    <p>Instructor: <span th:text="${course.instructor}"></span></p>
+    <a th:href="@{/courses}">Back to Course List</a>
+</body>
+</html>

@@ -1,0 +1,32 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+
+# STS / Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+
+# Dependency directories
+node_modules/
+
+# Temporary files
+*.tmp
+*.temp
