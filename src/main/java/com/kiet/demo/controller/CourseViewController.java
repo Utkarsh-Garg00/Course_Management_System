@@ -20,11 +20,25 @@ public class CourseViewController {
     }
 
     // Show all courses
-    @GetMapping("/courses")
-    public String showCourses(Model model) {
-        model.addAttribute("courses", service.retrieveAllCourses());
-        return "index";
-    }
+    
+    
+@GetMapping("/courses")
+public String showCourses(Model model) {
+
+    var courses = service.retrieveAllCourses();
+
+    model.addAttribute("courses", courses);
+    model.addAttribute("totalCourses", courses.size());
+
+    long instructors = courses.stream()
+            .map(c -> c.getInstructor())
+            .distinct()
+            .count();
+
+    model.addAttribute("totalInstructors", instructors);
+
+    return "index";
+}
 
     // Show add course form
     @GetMapping("/courses/add")

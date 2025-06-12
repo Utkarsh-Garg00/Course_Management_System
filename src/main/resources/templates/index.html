@@ -1,47 +1,204 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Course List</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 90%; margin: auto; padding-top: 20px; }
-        .add-button { display: block; width: fit-content; margin: 10px auto 20px auto; padding: 8px 16px; background-color: #2196F3; color: white; border: none; border-radius: 4px; text-decoration: none; font-weight: bold; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; border: 1px solid #888; text-align: center; }
-        th { background-color: #f2f2f2; }
-        .btn { padding: 5px 10px; margin: 2px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-update { background-color: #4CAF50; color: white; }
-        .btn-delete { background-color: #f44336; color: white; }
-    </style>
+<meta charset="UTF-8">
+<title>Course Management System</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+background:#f4f6f9;
+}
+
+.navbar{
+background:#0d6efd;
+}
+
+.stat-card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.table-card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+th{
+cursor:pointer;
+}
+
+</style>
+
 </head>
+
 <body>
-<div class="container">
-    <h2 style="text-align: center;">List of Courses</h2>
-    <a th:href="@{/courses/add}" class="add-button">Add Course</a>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Duration</th>
-                <th>Instructor</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="course : ${courses}">
-                <td th:text="${course.id}"></td>
-                <td th:text="${course.name}"></td>
-                <td th:text="${course.duration}"></td>
-                <td th:text="${course.instructor}"></td>
-                <td>
-                    <a th:href="@{|/courses/update/${course.id}|}" class="btn btn-update">Update</a>
-                    <a th:href="@{|/courses/delete/${course.id}|}" class="btn btn-delete"
-                       onclick="return confirm('Are you sure you want to delete this course?');">Delete</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-dark">
+<div class="container-fluid">
+<span class="navbar-brand">Course Management System</span>
 </div>
+</nav>
+
+
+<div class="container mt-4">
+
+<!-- DASHBOARD STATS -->
+
+<div class="row mb-4">
+
+<div class="col-md-6">
+<div class="stat-card">
+<h6>Total Courses</h6>
+<h2 th:text="${totalCourses}"></h2>
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="stat-card">
+<h6>Total Instructors</h6>
+<h2 th:text="${totalInstructors}"></h2>
+</div>
+</div>
+
+</div>
+
+
+<!-- COURSE TABLE -->
+
+<div class="table-card">
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+<h4>Course List</h4>
+
+<input type="text" id="searchInput" 
+class="form-control w-25" 
+placeholder="Search courses...">
+
+<a th:href="@{/courses/add}" class="btn btn-primary">
+Add Course
+</a>
+
+</div>
+
+
+<table class="table table-hover table-striped" id="courseTable">
+
+<thead class="table-dark">
+
+<tr>
+
+<th onclick="sortTable(0)">ID ⬍</th>
+<th onclick="sortTable(1)">Name ⬍</th>
+<th onclick="sortTable(2)">Duration ⬍</th>
+<th onclick="sortTable(3)">Instructor ⬍</th>
+<th>Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr th:each="course : ${courses}">
+
+<td th:text="${course.id}"></td>
+
+<td th:text="${course.name}"></td>
+
+<td th:text="${course.duration}"></td>
+
+<td th:text="${course.instructor}"></td>
+
+<td>
+
+<a th:href="@{|/courses/${course.id}|}" 
+class="btn btn-info btn-sm text-white">
+View
+</a>
+
+<a th:href="@{|/courses/update/${course.id}|}" 
+class="btn btn-success btn-sm">
+Edit
+</a>
+
+<a th:href="@{|/courses/delete/${course.id}|}" 
+class="btn btn-danger btn-sm"
+onclick="return confirm('Delete this course?');">
+Delete
+</a>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* SEARCH FILTER */
+
+document.getElementById("searchInput").addEventListener("keyup", function() {
+
+let filter = this.value.toLowerCase();
+let rows = document.querySelectorAll("#courseTable tbody tr");
+
+rows.forEach(row => {
+
+let text = row.innerText.toLowerCase();
+
+row.style.display = text.includes(filter) ? "" : "none";
+
+});
+
+});
+
+
+/* TABLE SORTING */
+
+function sortTable(columnIndex) {
+
+let table = document.getElementById("courseTable");
+let tbody = table.querySelector("tbody");
+let rows = Array.from(tbody.querySelectorAll("tr"));
+
+let asc = table.classList.toggle("asc");
+
+rows.sort((a, b) => {
+
+let A = a.cells[columnIndex].innerText.toLowerCase();
+let B = b.cells[columnIndex].innerText.toLowerCase();
+
+return asc ? A.localeCompare(B) : B.localeCompare(A);
+
+});
+
+tbody.innerHTML = "";
+
+rows.forEach(row => tbody.appendChild(row));
+
+}
+
+</script>
+
 </body>
+
 </html>
